@@ -8,7 +8,7 @@ def get_course(db: Session, course_id: int) -> Course | None:
     return db.query(Course).filter(Course.id == course_id).one_or_none()
 
 
-def get_all_courses(db: Session) -> list[type[Course]]:
+def get_all_courses(db: Session) -> list[Course]:
     return db.query(Course).all()
 
 
