@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import String, Text
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
 
@@ -6,8 +7,8 @@ from src.database import Base
 class Course(Base):
     __tablename__ = "courses"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), nullable=False)
-    description = Column(Text, nullable=True)
-    author = Column(String(100), nullable=True)
-    duration_hours = Column(Integer, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    author: Mapped[str] = mapped_column(String(100), nullable=True)
+    duration_hours: Mapped[int] = mapped_column(nullable=True)
