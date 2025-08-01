@@ -1,0 +1,30 @@
+# virtualenv
+.venv/
+venv/
+env/
+ENV/
+
+# IDE settings
+.vscode/
+.idea/
+
+# env files
+.env
+.env.*
+
+# sqlite
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+
+# test & analysis
+.pytest_cache/
+.mypy_cache/
+
+# OS / temp files
+*.log
+*.bak
+*.swp
+.DS_Store
