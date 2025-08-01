@@ -7,8 +7,9 @@ from src.database import Base, engine
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):  # noqa: RUF029
-    Base.metadata.create_all(bind=engine)
+async def lifespan(_: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
 
 
