@@ -40,7 +40,10 @@ def create_course(course: CourseCreate, db: Session = Depends(get_db)):
 
 @router.put("/{course_id}", response_model=CourseOut)
 def update_course(course_id: int, course: CourseUpdate, db: Session = Depends(get_db)):
-    """Обновление курса по id"""
+    """
+    Обновление курса по id
+    """
+
     return course_service.update_course(db, course_id, course)
 
 
