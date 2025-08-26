@@ -10,5 +10,6 @@ class Course(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
-    author: Mapped[str] = mapped_column(String(100), nullable=True)
+    author_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    author_email: Mapped[str] = mapped_column(String(100), nullable=True)
     duration_hours: Mapped[int] = mapped_column(nullable=True)

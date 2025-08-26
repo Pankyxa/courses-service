@@ -1,10 +1,9 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class CourseCreate(BaseModel):
     title: str
     description: str
-    author: str
     duration_hours: int
 
 
@@ -18,7 +17,8 @@ class CourseOut(BaseModel):
     id: int
     title: str
     description: str
-    author: str
+    author_id: str
+    author_email: EmailStr
     duration_hours: int
 
     model_config = ConfigDict(from_attributes=True)
