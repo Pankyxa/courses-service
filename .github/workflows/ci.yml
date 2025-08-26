@@ -17,7 +17,7 @@ jobs:
       - name: Run mypy
         run: docker run --rm -v $PWD:/app linters mypy src/
       - name: Run ruff
-        run: docker run --rm -v $PWD:/app linters ruff --no-cache check .
+        run: docker run --rm -v $PWD:/app linters ruff check --no-cache .
 
   push_image:
     needs: run_linters
