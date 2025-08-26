@@ -77,12 +77,22 @@ class AuthMiddleware(BaseHTTPMiddleware):
     @staticmethod
     def _redirect_to_sso(request: Request):
         """Перенаправляет на SSO для аутентификации"""
+        accept_header = request.headers.get("Accept", "")
         current_url = str(request.url)
         redirect_uri = quote_plus(current_url)
         sso_login_url = (f"{settings.front_sso_url}/auth/"
                          f"?redirect_uri={redirect_uri}&realm={settings.sso_realm}")
 
         logger.info("Redirecting to SSO: %s", sso_login_url)
+
+        if "application/json" in accept_header:
+            return JSONResponse(
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={
+                    "detail": "Not authenticated",
+                    "redirect_url": sso_login_url
+                }
+            )
 
         return RedirectResponse(
             url=sso_login_url,
