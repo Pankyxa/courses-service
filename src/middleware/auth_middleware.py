@@ -27,6 +27,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
         self.admin_paths = admin_paths or []
 
     async def dispatch(self, request: Request, call_next):
+        # Пропускаем preflight запросы OPTIONS без аутентификации
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         path = request.url.path
 
         if any(path.startswith(public_path) for public_path in self.public_paths):
@@ -53,7 +57,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 ):
                     return JSONResponse(
                         status_code=HTTP_403_FORBIDDEN,
-                        content={"detail": "Admin privileges required"}
+                        content={"detail": "Admin privileges required"},
+                        # Добавляем CORS-заголовки для ошибки 403
+                        headers=self._get_cors_headers(request)
                     )
 
                 request.state.user = user_claims
@@ -74,8 +80,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         return await call_next(request)
 
-    @staticmethod
-    def _redirect_to_sso(request: Request):
+    def _redirect_to_sso(self, request: Request):
         """Перенаправляет на SSO для аутентификации"""
         accept_header = request.headers.get("Accept", "")
         current_url = str(request.url)
@@ -91,10 +96,29 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 content={
                     "detail": "Not authenticated",
                     "redirect_url": sso_login_url
-                }
+                },
+                # Добавляем CORS-заголовки для JSON-ответа
+                headers=self._get_cors_headers(request)
             )
 
         return RedirectResponse(
             url=sso_login_url,
-            status_code=302
+            status_code=302,
+            # Добавляем CORS-заголовки для редиректа
+            headers=self._get_cors_headers(request)
         )
+
+    @staticmethod
+    def _get_cors_headers(request: Request):
+        """Возвращает необходимые CORS-заголовки для ответа"""
+        origin = request.headers.get("Origin")
+        if not origin:
+            return {}
+
+        return {
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Authorization, Content-Type, Accept",
+            "Access-Control-Expose-Headers": "Content-Type, Content-Length",
+        }
