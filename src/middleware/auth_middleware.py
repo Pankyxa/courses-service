@@ -83,8 +83,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
     def _redirect_to_sso(self, request: Request):
         """Перенаправляет на SSO для аутентификации"""
         accept_header = request.headers.get("Accept", "")
-        current_url = str(request.url)
-        redirect_uri = quote_plus(current_url)
+        redirect_uri = settings.api_url
         sso_login_url = (f"{settings.front_sso_url}/auth/"
                          f"?redirect_uri={redirect_uri}&realm={settings.sso_realm}")
 
